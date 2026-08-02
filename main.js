@@ -976,3 +976,27 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
 }, { threshold: 0.18 });
 document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+window.addEventListener('DOMContentLoaded', () => {
+    const bgMusic = document.getElementById('bgMusic');
+    
+    // محاولة تشغيل الصوت تلقائياً أول ما الموقع يحمل
+    let playPromise = bgMusic.play();
+
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            // لو المتصفح منع التشغيل التلقائي، هنشغله مع أول كليك في أي مكان في الصفحة
+            console.log("المتصفح منع التشغيل التلقائي. سيتم تشغيل الصوت مع أول تفاعل.");
+            
+            const startAudio = () => {
+                bgMusic.play();
+                // مسح الحدث عشان ما يفضلش يشتغل مع كل كليك
+                document.removeEventListener('click', startAudio);
+                document.removeEventListener('touchstart', startAudio); // عشان الموبايل
+            };
+
+            // ربط التشغيل بضغطة الماوس أو لمس الشاشة
+            document.addEventListener('click', startAudio);
+            document.addEventListener('touchstart', startAudio);
+        });
+    }
+});
